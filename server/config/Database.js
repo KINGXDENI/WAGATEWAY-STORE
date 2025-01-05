@@ -5,14 +5,29 @@ import { moment } from "./index.js";
 
 const { DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DIALECT } = process.env;
 
-let connection = mysql.createPool({ waitForConnections: true, connectTimeout: 30000, host: DB_HOST, port: DB_PORT, user: DB_USER, password: DB_PASSWORD });
+let connection = mysql.createPool({
+	waitForConnections: true,
+	connectTimeout: 60000,
+	host: DB_HOST,
+	port: DB_PORT,
+	user: DB_USER,
+	password: DB_PASSWORD
+});
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
 	host: DB_HOST,
 	port: DB_PORT,
 	dialect: DB_DIALECT,
 	logging: false,
+	pool: {
+		max: 5,
+		min: 0,
+		acquire: 60000, // Waktu maksimum untuk mendapatkan koneksi dari pool
+		idle: 10000,
+	},
+	dialectOptions: {
+		connectTimeout: 60000, // Timeout koneksi
+	},
 });
-
 async function connectDatabase() {
 	connection.query(`use \`${DB_NAME}\`;`, (err) => {
 		if (err) {
