@@ -1,6 +1,5 @@
 # public/mazer
-session/*/*.json
-public/log/*.txt
+
 
 # Logs
 logs
