@@ -1,9 +1,22 @@
-import { Sequelize } from "sequelize";
+import {
+	Sequelize
+} from "sequelize";
 import mysql from "mysql2";
-import { modules } from "../../lib/index.js";
-import { moment } from "./index.js";
+import {
+	modules
+} from "../../lib/index.js";
+import {
+	moment
+} from "./index.js";
 
-const { DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DIALECT } = process.env;
+const {
+	DB_NAME,
+	DB_USER,
+	DB_PASSWORD,
+	DB_HOST,
+	DB_PORT,
+	DB_DIALECT
+} = process.env;
 
 let connection = mysql.createPool({
 	waitForConnections: true,
@@ -17,16 +30,10 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
 	host: DB_HOST,
 	port: DB_PORT,
 	dialect: DB_DIALECT,
-	logging: false,
-	pool: {
-		max: 5,
-		min: 0,
-		acquire: 60000, // Waktu maksimum untuk mendapatkan koneksi dari pool
-		idle: 10000,
-	},
+	logging: false, // matikan logging jika perlu
 	dialectOptions: {
-		connectTimeout: 60000, // Timeout koneksi
-	},
+		connectTimeout: 60000, // waktu koneksi (dalam milidetik)
+	}
 });
 async function connectDatabase() {
 	connection.query(`use \`${DB_NAME}\`;`, (err) => {
@@ -45,9 +52,16 @@ async function connectDatabase() {
 			console.error(error);
 		});
 
-	await sequelize.sync({ force: false, alter: false }).then(() => {
+	await sequelize.sync({
+		force: false,
+		alter: false
+	}).then(() => {
 		console.log(modules.color("[APP]", "#EB6112"), modules.color(moment().format("DD/MM/YY HH:mm:ss"), "#F8C471"), modules.color(`Re-Sync Database`, "#82E0AA"));
 	});
 }
 
-export { connectDatabase, sequelize, connection };
+export {
+	connectDatabase,
+	sequelize,
+	connection
+};
